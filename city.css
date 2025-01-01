@@ -10,6 +10,9 @@ header {
     padding: 20px;
     text-align: center;
 }
+section {
+    margin-bottom: 40px;
+}
 
 h1 {
   text-align: center;
