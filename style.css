@@ -23,14 +23,7 @@ header p {
     margin-top: 10px;
     font-size: 1.2rem;
 }
-nav {
-  display: flex; /* Use flexbox for easy spacing */
-  justify-content: center; /* Center the buttons horizontally */
-}
 
-nav a {
-  margin: 0 10px; /* Add 10px margin on both sides of each link */
-}
 main {
     padding: 20px;
     max-width: 1200px;
