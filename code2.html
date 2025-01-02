@@ -1,1 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Business Case Code Examples</title>
+</head>
+<body>
 
+  <h1>Business Case 2: Data Analysis</h1>
+  <pre><code>
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+// Define a structure for housing options
+struct HousingOption {
+    string name;
+    string constructionMethod;
+    int affordabilityScore;  // Lower is more affordable
+    int sustainabilityScore; // Higher is better
+    int totalScore;          // Combined score (sustainability - affordability)
+
+    // Comparison operator for the max-heap
+    bool operator<(const HousingOption& other) const {
+        return totalScore < other.totalScore;
+    }
+};
+
+int main() {
+    // Seed for random number generation
+    srand(time(0));
+
+    // Vector to store housing options
+    vector<HousingOption> housingOptions = {
+        {"Option 1", "Prefabricated", rand() % 101, rand() % 101},
+        {"Option 2", "3D-Printed", rand() % 101, rand() % 101},
+        {"Option 3", "Recycled Materials", rand() % 101, rand() % 101},
+        {"Option 4", "Modular Construction", rand() % 101, rand() % 101},
+        {"Option 5", "Traditional", rand() % 101, rand() % 101},
+    };
+
+    // Calculate total scores for each housing option
+    for (auto& option : housingOptions) {
+        option.totalScore = option.sustainabilityScore - option.affordabilityScore;
+    }
+
+    // Create a max-heap
+    priority_queue<HousingOption> maxHeap;
+
+    // Add all housing options to the heap
+    for (const auto& option : housingOptions) {
+        maxHeap.push(option);
+    }
+
+    // Print all housing options with their scores
+    cout << "Housing Options:\n";
+    for (const auto& option : housingOptions) {
+        cout << option.name << " (" << option.constructionMethod << ")\n";
+        cout << "  Affordability: " << option.affordabilityScore << "\n";
+        cout << "  Sustainability: " << option.sustainabilityScore << "\n";
+        cout << "  Total Score: " << option.totalScore << "\n\n";
+    }
+
+    // Find the most sustainable and affordable option
+    if (!maxHeap.empty()) {
+        HousingOption bestOption = maxHeap.top();
+        cout << "Most Sustainable and Affordable Option:\n";
+        cout << bestOption.name << " (" << bestOption.constructionMethod << ")\n";
+        cout << "  Affordability: " << bestOption.affordabilityScore << "\n";
+        cout << "  Sustainability: " << bestOption.sustainabilityScore << "\n";
+        cout << "  Total Score: " << bestOption.totalScore << "\n";
+    }
+
+    return 0;
+}
+  </code></pre>
+
+  <h1>Business Case 5: Dijkstra's Algorithm</h1>
+  <pre><code>
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <limits>
+#include <unordered_set>
+
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+// Function to perform Dijkstra's algorithm from a single source
+void dijkstra(int source, const vector<vector<pair<int, int>>>& adjList, vector<int>& minDist) {
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+    pq.push({0, source});
+    minDist[source] = 0;
+
+    while (!pq.empty()) {
+        int currentDist = pq.top().first;
+        int u = pq.top().second;
+        pq.pop();
+
+        if (currentDist > minDist[u]) continue;
+
+        for (const auto& [v, weight] : adjList[u]) {
+            int distance = currentDist + weight;
+            if (distance < minDist[v]) {
+                minDist[v] = distance;
+                pq.push({distance, v});
+            }
+        }
+    }
+}
+
+int main() {
+    int numNodes = 6; // Example number of nodes
+    vector<vector<pair<int, int>>> adjList(numNodes);
+
+    // Example edges (u, v, weight)
+    vector<tuple<int, int, int>> edges = {
+        {0, 1, 10}, {0, 2, 15}, {1, 3, 12},
+        {2, 4, 10}, {3, 5, 2}, {4, 5, 5}
+    };
+
+    // Construct the adjacency list
+    for (const auto& [u, v, weight] : edges) {
+        adjList[u].emplace_back(v, weight);
+        adjList[v].emplace_back(u, weight); // Assuming undirected graph
+    }
+
+    // Essential services located at nodes 3 and 4
+    unordered_set<int> essentialServices = {3, 4};
+
+    // Initialize minimum distances to infinity
+    vector<int> minTravelTime(numNodes, INF);
+
+    // Run Dijkstra's algorithm from each essential service
+    for (int service : essentialServices) {
+        vector<int> dist(numNodes, INF);
+        dijkstra(service, adjList, dist);
+        for (int i = 0; i < numNodes; ++i) {
+            minTravelTime[i] = min(minTravelTime[i], dist[i]);
+        }
+    }
+
+    // Output the minimum travel times to the nearest essential service
+    cout << "Minimum travel time to the nearest essential service for each node:\n";
+    for (int i = 0; i < numNodes; ++i) {
+        if (minTravelTime[i] == INF) {
+            cout << "Node " << i << ": Unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << minTravelTime[i] << " units\n";
+        }
+    }
+
+    return 0;
+}
+  </code></pre>
+
+</body>
+</html>
