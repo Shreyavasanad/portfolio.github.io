@@ -1,1 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Business Case Code Examples</title>
+</head>
+<body>
 
+  <h1>FINAL CODE:</h1>
+  <pre><code>
+
+  </code></pre>
+#include <iostream>
+#include <vector>
+#include <string>
+#include <map>
+#include <queue>
+#include <cstdlib>
+#include <ctime>
+#include <limits>
+#include <unordered_set>
+#include <algorithm>
+
+using namespace std;
+
+// 1. Demographics and Housing Analysis
+struct Person {
+    string name;
+    string demographicGroup;
+    string housingType;
+};
+
+// 2. Housing Option Analysis
+struct HousingOption {
+    string name;
+    string constructionMethod;
+    int affordabilityScore;  // Lower is more affordable
+    int sustainabilityScore; // Higher is better
+    int totalScore;          // Combined score (sustainability - affordability)
+
+    // Comparison operator for the max-heap
+    bool operator<(const HousingOption& other) const {
+        return totalScore < other.totalScore;
+    }
+};
+
+// 3. Union-Find for Kruskal's Algorithm (Minimum Spanning Tree)
+struct Edge {
+    int parcel1;
+    int parcel2;
+    int cost;
+    bool operator<(const Edge& other) const {
+        return cost < other.cost;
+    }
+};
+
+class UnionFind {
+public:
+    vector<int> parent, rank;
+
+    UnionFind(int n) {
+        parent.resize(n);
+        rank.resize(n, 0);
+        for (int i = 0; i < n; ++i) {
+            parent[i] = i;
+        }
+    }
+
+    int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]);
+        }
+        return parent[x];
+    }
+
+    bool unionSets(int x, int y) {
+        int rootX = find(x);
+        int rootY = find(y);
+
+        if (rootX == rootY) return false;
+
+        if (rank[rootX] > rank[rootY]) {
+            parent[rootY] = rootX;
+        } else if (rank[rootX] < rank[rootY]) {
+            parent[rootX] = rootY;
+        } else {
+            parent[rootY] = rootX;
+            rank[rootX]++;
+        }
+
+        return true;
+    }
+};
+
+// 4. Linked List for Funding Phases
+struct FundingPhase {
+    string phaseType;
+    double amount;
+    string description;
+    FundingPhase* next;
+
+    FundingPhase(string type, double amt, string desc)
+        : phaseType(type), amount(amt), description(desc), next(nullptr) {}
+};
+
+class FundingManager {
+private:
+    FundingPhase* head;
+
+public:
+    FundingManager() : head(nullptr) {}
+
+    void addPhase(const string& type, double amount, const string& description) {
+        FundingPhase* newPhase = new FundingPhase(type, amount, description);
+        if (!head) {
+            head = newPhase;
+        } else {
+            FundingPhase* temp = head;
+            while (temp->next) {
+                temp = temp->next;
+            }
+            temp->next = newPhase;
+        }
+    }
+
+    void displayPhases() const {
+        if (!head) {
+            cout << "No funding phases available.\n";
+            return;
+        }
+        FundingPhase* temp = head;
+        cout << "Funding Phases:\n";
+        while (temp) {
+            cout << "Phase Type: " << temp->phaseType << "\n"
+                 << "Amount: $" << temp->amount << "\n"
+                 << "Description: " << temp->description << "\n"
+                 << "-------------------------\n";
+            temp = temp->next;
+        }
+    }
+
+    void removePhase(const string& type) {
+        if (!head) {
+            cout << "No funding phases to remove.\n";
+            return;
+        }
+        if (head->phaseType == type) {
+            FundingPhase* toDelete = head;
+            head = head->next;
+            delete toDelete;
+            cout << "Phase \"" << type << "\" removed successfully.\n";
+            return;
+        }
+        FundingPhase* temp = head;
+        while (temp->next && temp->next->phaseType != type) {
+            temp = temp->next;
+        }
+        if (temp->next) {
+            FundingPhase* toDelete = temp->next;
+            temp->next = temp->next->next;
+            delete toDelete;
+            cout << "Phase \"" << type << "\" removed successfully.\n";
+        } else {
+            cout << "Phase \"" << type << "\" not found.\n";
+        }
+    }
+
+    ~FundingManager() {
+        while (head) {
+            FundingPhase* temp = head;
+            head = head->next;
+            delete temp;
+        }
+    }
+};
+
+// 5. Construction Step Queue
+struct ConstructionStep {
+    string stepDescription;
+    int duration;
+
+    ConstructionStep(const string& desc, int dur) : stepDescription(desc), duration(dur) {}
+};
+
+// 6. Dijkstra's Algorithm for Shortest Path
+const int INF = numeric_limits<int>::max();
+
+void dijkstra(int source, const vector<vector<pair<int, int>>>& adjList, vector<int>& minDist) {
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+    pq.push({0, source});
+    minDist[source] = 0;
+
+    while (!pq.empty()) {
+        int currentDist = pq.top().first;
+        int u = pq.top().second;
+        pq.pop();
+
+        if (currentDist > minDist[u]) continue;
+
+        for (const auto& [v, weight] : adjList[u]) {
+            int distance = currentDist + weight;
+            if (distance < minDist[v]) {
+                minDist[v] = distance;
+                pq.push({distance, v});
+            }
+        }
+    }
+}
+
+int main() {
+    srand(time(0));
+
+    // 1. Demographic and Housing Analysis
+    vector<Person> data = {
+        {"Alice", "Youth", "Apartment"},
+        {"Bob", "Senior", "Independent House"},
+        {"Charlie", "Youth", "Shared Housing"},
+        {"Diana", "Adult", "Apartment"},
+        {"Eve", "Senior", "Apartment"}
+    };
+
+    map<string, int> demographicCounts;
+    map<string, int> housingCounts;
+
+    for (const auto& person : data) {
+        demographicCounts[person.demographicGroup]++;
+        housingCounts[person.housingType]++;
+    }
+
+    cout << "Demographic Groups Count:\n";
+    for (const auto& entry : demographicCounts) {
+        cout << entry.first << ": " << entry.second << endl;
+    }
+
+    cout << "\nHousing Types Count:\n";
+    for (const auto& entry : housingCounts) {
+        cout << entry.first << ": " << entry.second << endl;
+    }
+
+    // 2. Housing Option Analysis
+    vector<HousingOption> housingOptions = {
+        {"Option 1", "Prefabricated", rand() % 101, rand() % 101},
+        {"Option 2", "3D-Printed", rand() % 101, rand() % 101},
+        {"Option 3", "Recycled Materials", rand() % 101, rand() % 101},
+        {"Option 4", "Modular Construction", rand() % 101, rand() % 101},
+        {"Option 5", "Traditional", rand() % 101, rand() % 101},
+    };
+
+    for (auto& option : housingOptions) {
+        option.totalScore = option.sustainabilityScore - option.affordabilityScore;
+    }
+
+    priority_queue<HousingOption> maxHeap;
+    for (const auto& option : housingOptions) {
+        maxHeap.push(option);
+    }
+
+    cout << "\nHousing Options:\n";
+    for (const auto& option : housingOptions) {
+        cout << option.name << " (" << option.constructionMethod << ")\n";
+        cout << "  Affordability: " << option.affordabilityScore << "\n";
+        cout << "  Sustainability: " << option.sustainabilityScore << "\n";
+        cout << "  Total Score: " << option.totalScore << "\n\n";
+    }
+
+    if (!maxHeap.empty()) {
+        HousingOption bestOption = maxHeap.top();
+        cout << "Most Sustainable and Affordable Option:\n";
+        cout << bestOption.name << " (" << bestOption.constructionMethod << ")\n";
+        cout << "  Affordability: " << bestOption.affordabilityScore << "\n";
+        cout << "  Sustainability: " << bestOption.sustainabilityScore << "\n";
+        cout << "  Total Score: " << bestOption.totalScore << "\n";
+    }
+
+    // 3. Union-Find for Kruskal's Algorithm
+    vector<Edge> edges = {
+        {0, 1, rand() % 100 + 1},
+        {0, 2, rand() % 100 + 1},
+        {1, 3, rand() % 100 + 1},
+        {2, 4, rand() % 100 + 1},
+        {3, 5, rand() % 100 + 1},
+        {4, 5, rand() % 100 + 1}
+    };
+
+    sort(edges.begin(), edges.end());
+
+    UnionFind uf(6);
+    vector<Edge> mst;
+    int totalCost = 0;
+
+    for (const auto& edge : edges) {
+        if (uf.unionSets(edge.parcel1, edge.parcel2)) {
+            mst.push_back(edge);
+            totalCost += edge.cost;
+        }
+    }
+
+    cout << "\nMinimal connected parcels for planning approval:\n";
+    for (const auto& edge : mst) {
+        cout << "Parcel " << edge.parcel1 << " <-> Parcel " << edge.parcel2
+             << " (Cost: " << edge.cost << ")\n";
+    }
+    cout << "Total Cost: " << totalCost << "\n";
+
+    // 4. Linked List for Funding Phases
+    FundingManager manager;
+    manager.addPhase("Public", 500000, "Initial public offering to raise funds.");
+    manager.addPhase("Private", 750000, "Private equity round for further investment.");
+    manager.addPhase("Angel", 200000, "Angel investors funding for startup growth.");
+
+    cout << "\nFunding Phases:\n";
+    manager.displayPhases();
+    manager.removePhase("Private");
+    manager.displayPhases();
+
+    // 5. Construction Step Queue
+    queue<ConstructionStep> constructionQueue;
+    string steps[] = {
+        "Laying the foundation", "Framing the structure", "Roofing installation",
+        "Installing electrical wiring", "Plumbing setup",
+        "Installing windows and doors", "Interior finishing and painting",
+        "Final inspection and approval"
+    };
+
+    for (int i = 0; i < 8; ++i) {
+        int duration = rand() % 10 + 1;
+        constructionQueue.push(ConstructionStep(steps[i], duration));
+    }
+
+    int totalTime = 0;
+    while (!constructionQueue.empty()) {
+        ConstructionStep currentStep = constructionQueue.front();
+        constructionQueue.pop();
+        cout << "Executing: " << currentStep.stepDescription
+             << " (Duration: " << currentStep.duration << " days)\n";
+        totalTime += currentStep.duration;
+    }
+
+    cout << "\nTotal construction time: " << totalTime << " days\n";
+
+    // 6. Dijkstra's Algorithm for Shortest Path
+    int numNodes = 6;
+    vector<vector<pair<int, int>>> adjList(numNodes);
+    vector<tuple<int, int, int>> edges_ = {
+        {0, 1, 10}, {0, 2, 15}, {1, 3, 12}, {2, 4, 10}, {3, 5, 2}, {4, 5, 5}
+    };
+
+    for (const auto& [u, v, weight] : edges_) {
+        adjList[u].emplace_back(v, weight);
+        adjList[v].emplace_back(u, weight);
+    }
+
+    unordered_set<int> essentialServices = {3, 4};
+    vector<int> minTravelTime(numNodes, INF);
+
+    for (int service : essentialServices) {
+        vector<int> dist(numNodes, INF);
+        dijkstra(service, adjList, dist);
+        for (int i = 0; i < numNodes; ++i) {
+            minTravelTime[i] = min(minTravelTime[i], dist[i]);
+        }
+    }
+
+    cout << "\nMinimum travel time to the nearest essential service for each node:\n";
+    for (int i = 0; i < numNodes; ++i) {
+        if (minTravelTime[i] == INF) {
+            cout << "Node " << i << ": Unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << minTravelTime[i] << " units\n";
+        }
+    }
+
+    return 0;
+}
+</body>
+</html>
