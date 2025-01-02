@@ -5,7 +5,7 @@
 </head>
 <body>
 
-  <h1>Business Case 2: Data Analysis</h1>
+  <h1>Business Case 2: </h1>
   <pre><code>
 #include <iostream>
 #include <vector>
@@ -79,81 +79,65 @@ int main() {
 }
   </code></pre>
 
-  <h1>Business Case 5: Dijkstra's Algorithm</h1>
+  <h1>Business Case 5: </h1>
   <pre><code>
 #include <iostream>
-#include <vector>
 #include <queue>
-#include <limits>
-#include <unordered_set>
+#include <string>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
-const int INF = numeric_limits<int>::max();
+// Structure to represent a construction step
+struct ConstructionStep {
+    string stepDescription; // Description of the step
+    int duration;           // Time taken for the step in days
 
-// Function to perform Dijkstra's algorithm from a single source
-void dijkstra(int source, const vector<vector<pair<int, int>>>& adjList, vector<int>& minDist) {
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
-    pq.push({0, source});
-    minDist[source] = 0;
-
-    while (!pq.empty()) {
-        int currentDist = pq.top().first;
-        int u = pq.top().second;
-        pq.pop();
-
-        if (currentDist > minDist[u]) continue;
-
-        for (const auto& [v, weight] : adjList[u]) {
-            int distance = currentDist + weight;
-            if (distance < minDist[v]) {
-                minDist[v] = distance;
-                pq.push({distance, v});
-            }
-        }
-    }
-}
+    ConstructionStep(const string& desc, int dur) : stepDescription(desc), duration(dur) {}
+};
 
 int main() {
-    int numNodes = 6; // Example number of nodes
-    vector<vector<pair<int, int>>> adjList(numNodes);
+    srand(time(0));
 
-    // Example edges (u, v, weight)
-    vector<tuple<int, int, int>> edges = {
-        {0, 1, 10}, {0, 2, 15}, {1, 3, 12},
-        {2, 4, 10}, {3, 5, 2}, {4, 5, 5}
+    // Queue to manage construction steps
+    queue<ConstructionStep> constructionQueue;
+
+    // List of possible construction steps
+    string steps[] = {
+        "Laying the foundation",
+        "Framing the structure",
+        "Roofing installation",
+        "Installing electrical wiring",
+        "Plumbing setup",
+        "Installing windows and doors",
+        "Interior finishing and painting",
+        "Final inspection and approval"
     };
 
-    // Construct the adjacency list
-    for (const auto& [u, v, weight] : edges) {
-        adjList[u].emplace_back(v, weight);
-        adjList[v].emplace_back(u, weight); // Assuming undirected graph
+    // Add random steps to the queue with random durations
+    cout << "Adding construction steps to the queue...\n";
+    for (int i = 0; i < 8; ++i) {
+        int duration = rand() % 10 + 1; // Random duration between 1 and 10 days
+        constructionQueue.push(ConstructionStep(steps[i], duration));
+        cout << "Added: " << steps[i] << " (Duration: " << duration << " days)\n";
     }
 
-    // Essential services located at nodes 3 and 4
-    unordered_set<int> essentialServices = {3, 4};
+    cout << "\nProcessing construction steps...\n";
+    int totalTime = 0;
 
-    // Initialize minimum distances to infinity
-    vector<int> minTravelTime(numNodes, INF);
+    // Process the queue
+    while (!constructionQueue.empty()) {
+        ConstructionStep currentStep = constructionQueue.front();
+        constructionQueue.pop();
 
-    // Run Dijkstra's algorithm from each essential service
-    for (int service : essentialServices) {
-        vector<int> dist(numNodes, INF);
-        dijkstra(service, adjList, dist);
-        for (int i = 0; i < numNodes; ++i) {
-            minTravelTime[i] = min(minTravelTime[i], dist[i]);
-        }
+        // Simulate the execution of the step
+        cout << "Executing: " << currentStep.stepDescription 
+             << " (Duration: " << currentStep.duration << " days)\n";
+        totalTime += currentStep.duration;
     }
 
-    // Output the minimum travel times to the nearest essential service
-    cout << "Minimum travel time to the nearest essential service for each node:\n";
-    for (int i = 0; i < numNodes; ++i) {
-        if (minTravelTime[i] == INF) {
-            cout << "Node " << i << ": Unreachable\n";
-        } else {
-            cout << "Node " << i << ": " << minTravelTime[i] << " units\n";
-        }
-    }
+    cout << "\nTotal construction time: " << totalTime << " days\n";
 
     return 0;
 }
