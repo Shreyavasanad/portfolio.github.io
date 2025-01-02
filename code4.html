@@ -1,1 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Business Case Code Examples</title>
+</head>
+<body>
 
+  <h1>Business Case 4: </h1>
+  <pre><code>
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+// Node structure for the linked list
+struct FundingPhase {
+    string phaseType;    // Type of funding phase (e.g., "Public", "Private")
+    double amount;       // Amount of funding in this phase
+    string description;  // Description of the phase
+    FundingPhase* next;  // Pointer to the next phase
+
+    // Constructor for easy initialization
+    FundingPhase(string type, double amt, string desc)
+        : phaseType(type), amount(amt), description(desc), next(nullptr) {}
+};
+
+// Class to manage the funding phases using a LinkedList
+class FundingManager {
+private:
+    FundingPhase* head;  // Head of the linked list
+
+public:
+    FundingManager() : head(nullptr) {}
+
+    // Add a funding phase to the list
+    void addPhase(const string& type, double amount, const string& description) {
+        FundingPhase* newPhase = new FundingPhase(type, amount, description);
+        if (!head) {
+            head = newPhase;
+        } else {
+            FundingPhase* temp = head;
+            while (temp->next) {
+                temp = temp->next;
+            }
+            temp->next = newPhase;
+        }
+    }
+
+    // Display all funding phases
+    void displayPhases() const {
+        if (!head) {
+            cout << "No funding phases available.\n";
+            return;
+        }
+        FundingPhase* temp = head;
+        cout << "Funding Phases:\n";
+        while (temp) {
+            cout << "Phase Type: " << temp->phaseType << "\n"
+                 << "Amount: $" << temp->amount << "\n"
+                 << "Description: " << temp->description << "\n"
+                 << "-------------------------\n";
+            temp = temp->next;
+        }
+    }
+
+    // Remove a funding phase by type
+    void removePhase(const string& type) {
+        if (!head) {
+            cout << "No funding phases to remove.\n";
+            return;
+        }
+        if (head->phaseType == type) {
+            FundingPhase* toDelete = head;
+            head = head->next;
+            delete toDelete;
+            cout << "Phase \"" << type << "\" removed successfully.\n";
+            return;
+        }
+        FundingPhase* temp = head;
+        while (temp->next && temp->next->phaseType != type) {
+            temp = temp->next;
+        }
+        if (temp->next) {
+            FundingPhase* toDelete = temp->next;
+            temp->next = temp->next->next;
+            delete toDelete;
+            cout << "Phase \"" << type << "\" removed successfully.\n";
+        } else {
+            cout << "Phase \"" << type << "\" not found.\n";
+        }
+    }
+
+    // Destructor to free memory
+    ~FundingManager() {
+        while (head) {
+            FundingPhase* temp = head;
+            head = head->next;
+            delete temp;
+        }
+    }
+};
+
+int main() {
+    FundingManager manager;
+
+    // Adding funding phases
+    manager.addPhase("Public", 500000, "Initial public offering to raise funds.");
+    manager.addPhase("Private", 750000, "Private equity round for further investment.");
+    manager.addPhase("Angel", 200000, "Angel investors funding for startup growth.");
+
+    // Display all funding phases
+    manager.displayPhases();
+
+    // Remove a specific phase
+    manager.removePhase("Private");
+
+    // Display phases after removal
+    manager.displayPhases();
+
+    return 0;
+}
+  </code></pre>
+
+  <h1>Business Case 6:</h1>
+  <pre><code>
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <limits>
+#include <unordered_set>
+
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+// Function to perform Dijkstra's algorithm from a single source
+void dijkstra(int source, const vector<vector<pair<int, int>>>& adjList, vector<int>& minDist) {
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+    pq.push({0, source});
+    minDist[source] = 0;
+
+    while (!pq.empty()) {
+        int currentDist = pq.top().first;
+        int u = pq.top().second;
+        pq.pop();
+
+        if (currentDist > minDist[u]) continue;
+
+        for (const auto& [v, weight] : adjList[u]) {
+            int distance = currentDist + weight;
+            if (distance < minDist[v]) {
+                minDist[v] = distance;
+                pq.push({distance, v});
+            }
+        }
+    }
+}
+
+int main() {
+    int numNodes = 6; // Example number of nodes
+    vector<vector<pair<int, int>>> adjList(numNodes);
+
+    // Example edges (u, v, weight)
+    vector<tuple<int, int, int>> edges = {
+        {0, 1, 10}, {0, 2, 15}, {1, 3, 12},
+        {2, 4, 10}, {3, 5, 2}, {4, 5, 5}
+    };
+
+    // Construct the adjacency list
+    for (const auto& [u, v, weight] : edges) {
+        adjList[u].emplace_back(v, weight);
+        adjList[v].emplace_back(u, weight); // Assuming undirected graph
+    }
+
+    // Essential services located at nodes 3 and 4
+    unordered_set<int> essentialServices = {3, 4};
+
+    // Initialize minimum distances to infinity
+    vector<int> minTravelTime(numNodes, INF);
+
+    // Run Dijkstra's algorithm from each essential service
+    for (int service : essentialServices) {
+        vector<int> dist(numNodes, INF);
+        dijkstra(service, adjList, dist);
+        for (int i = 0; i < numNodes; ++i) {
+            minTravelTime[i] = min(minTravelTime[i], dist[i]);
+        }
+    }
+
+    // Output the minimum travel times to the nearest essential service
+    cout << "Minimum travel time to the nearest essential service for each node:\n";
+    for (int i = 0; i < numNodes; ++i) {
+        if (minTravelTime[i] == INF) {
+            cout << "Node " << i << ": Unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << minTravelTime[i] << " units\n";
+        }
+    }
+
+    return 0;
+}
+  </code></pre>
+
+</body>
+</html>
