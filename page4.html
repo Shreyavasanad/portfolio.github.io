@@ -1,1 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAA Lab Reflections</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #555;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        ol {
+            margin-left: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .question {
+            font-weight: bold;
+            color: #444;
+        }
+        pre {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            color: #d63384;
+        }
+    </style>
+</head>
+<body>
+    <h1>DAA Lab Reflections</h1>
+    
+    <div class="section">
+        <h2>Key Concepts Learned</h2>
+        <ul>
+            <li><b>Time Complexity Analysis:</b> Understanding the efficiency of algorithms by analyzing their time requirements in terms of input size.</li>
+            <li>
+                <b>Binary Search Tree (BST):</b> A data structure used to store sorted data efficiently for search, insert, and delete operations.
+                <pre><code>
+// Binary Search Tree: Insert and Search Example
+class Node {
+    int key;
+    Node left, right;
 
+    public Node(int item) {
+        key = item;
+        left = right = null;
+    }
+}
+
+class BinaryTree {
+    Node root;
+
+    // Insert a key into the BST
+    Node insert(Node root, int key) {
+        if (root == null) {
+            return new Node(key);
+        }
+        if (key < root.key) {
+            root.left = insert(root.left, key);
+        } else if (key > root.key) {
+            root.right = insert(root.right, key);
+        }
+        return root;
+    }
+
+    // Search for a key in the BST
+    boolean search(Node root, int key) {
+        if (root == null) return false;
+        if (root.key == key) return true;
+        return key < root.key ? search(root.left, key) : search(root.right, key);
+    }
+}
+                </code></pre>
+            </li>
+            <li>
+                <b>Depth First Search (DFS):</b> Technique to traverse graphs.
+                <pre><code>
+// DFS in a Graph
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+void dfs(int node, vector<bool>& visited, vector<vector<int>>& adj) {
+    visited[node] = true;
+    cout &lt;&lt; node &lt;&lt; " ";
+    for (int neighbor : adj[node]) {
+        if (!visited[neighbor]) {
+            dfs(neighbor, visited, adj);
+        }
+    }
+}
+
+int main() {
+    int nodes = 5;
+    vector<vector<int>> adj(nodes);
+    adj[0] = {1, 2};
+    adj[1] = {0, 3};
+    adj[2] = {0};
+    adj[3] = {1, 4};
+    adj[4] = {3};
+
+    vector<bool> visited(nodes, false);
+    dfs(0, visited, adj);
+    return 0;
+}
+                </code></pre>
+            </li>
+            <li>
+                <b>Heap:</b> A specialized tree-based data structure used in heap sort and priority queues.
+                <pre><code>
+// Min Heap Example
+#include &lt;iostream&gt;
+#include &lt;queue&gt;
+using namespace std;
+
+int main() {
+    priority_queue<int, vector<int>, greater<int>> minHeap;
+
+    minHeap.push(10);
+    minHeap.push(5);
+    minHeap.push(20);
+
+    while (!minHeap.empty()) {
+        cout &lt;&lt; minHeap.top() &lt;&lt; " ";
+        minHeap.pop();
+    }
+    return 0;
+}
+                </code></pre>
+            </li>
+            <li>
+                <b>Sorting:</b> Algorithms such as QuickSort and MergeSort to arrange elements in a specific order.
+            </li>
+            <li>
+                <b>Pattern Searching:</b> Techniques like KMP and Rabin-Karp for substring searching.
+            </li>
+            <li>
+                <b>Graph Algorithms:</b> Concepts like shortest path (Dijkstra's algorithm) and minimum spanning tree (Kruskal's algorithm).
+            </li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Answers to Questions</h2>
+        <ol>
+            <li>
+                <p class="question">What are the Challenges in learning/understanding the above concepts?</p>
+                <ul>
+                    <li>Time complexity analysis requires abstract thinking and familiarity with mathematical notation.</li>
+                    <li>Binary search trees need a good understanding of recursion and data structure design.</li>
+                    <li>DFS and BFS involve keeping track of visited nodes, which can get tricky in complex graphs.</li>
+                    <li>Understanding heaps requires a clear visualization of how trees work in array representation.</li>
+                    <li>Sorting algorithms require knowledge of when to use specific techniques based on input size and constraints.</li>
+                    <li>Pattern searching involves understanding advanced string-matching algorithms.</li>
+                    <li>Graph algorithms can be challenging due to the diverse range of applications and mathematical foundations.</li>
+                </ul>
+            </li>
+            <li>
+                <p class="question">What are the Challenges in correlating with the real-world applications?</p>
+                <ul>
+                    <li>Applying time complexity to real-world scenarios is difficult due to unpredictable input patterns.</li>
+                    <li>Implementing BST in scenarios where balanced trees (like AVL or Red-Black trees) are more practical.</li>
+                    <li>DFS and BFS might not map directly to real-world applications without appropriate abstractions.</li>
+                    <li>Heaps require a clear use case like priority queues to relate to real-world needs.</li>
+                    <li>Sorting techniques are often optimized in real-world libraries, making manual implementation rare.</li>
+                    <li>Pattern searching has practical applications in text editors and DNA sequencing but requires advanced understanding.</li>
+                    <li>Graph algorithms are essential for navigation systems, but implementing them can be intricate.</li>
+                </ul>
+            </li>
+            <li>
+                <p class="question">How do you determine the most efficient approach/design techniques when solving a complex problem?</p>
+                <ul>
+                    <li><b>Analyze the Problem Scope:</b> Understand the input size, constraints, and required output.</li>
+                    <li><b>Select the Appropriate Algorithm:</b> Choose based on the problem type (e.g., use graph traversal for connectivity problems).</li>
+                    <li><b>Consider Trade-offs:</b> Balance between time and space complexity.</li>
+                    <li><b>Iterative Optimization:</b> Test and refine the approach based on input cases.</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+</body>
+</html>
