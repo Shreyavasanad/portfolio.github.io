@@ -1,1 +1,149 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+/* Body and basic styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    background-color: #f7f7f7;
+    color: #333;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Header styling */
+header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 40px 0;
+    margin-bottom: 40px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+header p {
+    font-size: 1.2rem;
+}
+
+/* Section styling */
+section {
+    background-color: white;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Headings inside sections */
+section h2, section h3 {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+/* List styling */
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    background: #ecf0f1;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    font-size: 1.1rem;
+}
+
+ul li a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Definition list styling */
+dl {
+    text-align: left;
+    margin-left: 30%;
+    margin-right: 30%;
+}
+
+dt {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+dd {
+    margin-bottom: 10px;
+    color: #7f8c8d;
+}
+
+/* Blockquote styling */
+blockquote {
+    font-size: 1.2rem;
+    font-style: italic;
+    background-color: #f0f8ff;
+    padding: 20px;
+    border-left: 5px solid #3498db;
+    margin: 20px 0;
+}
+
+/* Button Styling */
+button {
+    background-color: #27ae60;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 20px 10px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #2ecc71;
+}
+
+/* Content visibility toggle buttons */
+#labReflectionContent, #theoryReflectionContent {
+    display: none;
+}
+
+button:focus {
+    outline: none;
+}
+
+/* Responsive Design for small screens */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    section {
+        padding: 15px;
+    }
+
+    section h2, section h3 {
+        font-size: 1.5rem;
+    }
+
+    button {
+        padding: 10px 20px;
+    }
+
+    dl {
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+}
